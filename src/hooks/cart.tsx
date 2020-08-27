@@ -48,15 +48,14 @@ const CartProvider: React.FC = ({ children }) => {
       // ADD A NEW ITEM TO THE CART
       const productIndex = products.findIndex(item => item.id === product.id);
 
-      if (productIndex === -1) {
-        // Set product list...
-        setProducts([...products, product]);
-
-        // ...And update AsyncStorage
-        await AsyncStorage.multiSet([
-          ['@GoMarketplace:cart', JSON.stringify(products)],
-        ]);
+      if (productIndex < 0) {
+        setProducts([...products, { ...product, quantity: 1 }]);
       }
+
+      // Update AsyncStorage
+      await AsyncStorage.multiSet([
+        ['@GoMarketplace:cart', JSON.stringify(products)],
+      ]);
     },
     [products],
   );
