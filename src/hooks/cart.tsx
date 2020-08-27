@@ -30,7 +30,14 @@ const CartProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO LOAD ITEMS FROM ASYNC STORAGE
+      // LOAD ITEMS FROM ASYNC STORAGE
+      const [cart] = await AsyncStorage.multiGet(['@GoMarketplace:cart']);
+
+      const storagedProducts = cart[1]
+        ? (JSON.parse(cart[1]) as Product[])
+        : [];
+
+      setProducts(storagedProducts);
     }
 
     loadProducts();
