@@ -39,14 +39,21 @@ const Dashboard: React.FC = () => {
       const response = await api.get('/products');
 
       // set items to the product list
-      setProducts(response.data);
+      const items = response.data;
+      setProducts(items);
     }
 
     loadProducts();
   }, []);
 
   function handleAddToCart(item: Product): void {
-    // TODO
+    // add item to cart
+    addToCart({
+      id: item.id,
+      image_url: item.image_url,
+      price: item.price,
+      title: item.title,
+    });
   }
 
   return (
