@@ -46,48 +46,73 @@ const CartProvider: React.FC = ({ children }) => {
   const addToCart = useCallback(
     async (product: Product) => {
       // ADD A NEW ITEM TO THE CART
-      const productIndex = products.findIndex(item => item.id === product.id);
+      const index = products.findIndex(item => item.id === product.id);
 
-      if (productIndex < 0) {
-        setProducts([...products, { ...product, quantity: 1 }]);
+      if (index < 0) {
+        const newProduct = { ...product, quantity: 1 };
+
+        setProducts([...products, newProduct]);
+
+        // Update AsyncStorage
+        await AsyncStorage.multiSet([
+          ['@GoMarketplace:cart', JSON.stringify(products)],
+        ]);
       }
-
-      // Update AsyncStorage
-      await AsyncStorage.multiSet([
-        ['@GoMarketplace:cart', JSON.stringify(products)],
-      ]);
     },
-    [products],
+    [products, setProducts],
   );
 
   const increment = useCallback(
     async id => {
       // INCREMENTS A PRODUCT QUANTITY IN THE CART
-      const productIndex = products.findIndex(product => product.id === id);
+      const index = products.findIndex(product => product.id === id);
 
-      if (productIndex >= 0) {
-        const item = products[productIndex];
+      if (index >= 0) {
+        const item = products[index];
 
-        const newItem = { ...item, quantity: item.quantity + 1 };
+        const updatedItem = { ...item, quantity: item.quantity + 1 };
 
         setProducts([
-          ...products.slice(0, productIndex),
-          newItem,
-          ...products.slice(productIndex + 1),
+          ...products.slice(0, index),
+          updatedItem,
+          ...products.slice(index + 1),
+        ]);
+
+        // Update AsyncStorage
+        await AsyncStorage.multiSet([
+          ['@GoMarketplace:cart', JSON.stringify(products)],
         ]);
       }
-
-      // Update AsyncStorage
-      await AsyncStorage.multiSet([
-        ['@GoMarketplace:cart', JSON.stringify(products)],
-      ]);
     },
     [products, setProducts],
   );
 
-  const decrement = useCallback(async id => {
-    // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
-  }, []);
+  const decrement = useCallback(
+    async id => {
+      // DECREMENTS A PRODUCT QUANTITY IN THE CART
+      const index = products.findIndex(product => product.id === id);
+
+      if (index >= 0) {
+        const item = products[index];
+
+        if (item.quantity > 1) {
+          const updatedItem = { ...item, quantity: item.quantity - 1 };
+
+          setProducts([
+            ...products.slice(0, index),
+            updatedItem,
+            ...products.slice(index + 1),
+          ]);
+
+          // Update AsyncStorage
+          await AsyncStorage.multiSet([
+            ['@GoMarketplace:cart', JSON.stringify(products)],
+          ]);
+        }
+      }
+    },
+    [products, setProducts],
+  );
 
   const value = React.useMemo(
     () => ({ addToCart, increment, decrement, products }),
