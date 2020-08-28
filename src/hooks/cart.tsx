@@ -60,9 +60,30 @@ const CartProvider: React.FC = ({ children }) => {
     [products],
   );
 
-  const increment = useCallback(async id => {
-    // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART
-  }, []);
+  const increment = useCallback(
+    async id => {
+      // INCREMENTS A PRODUCT QUANTITY IN THE CART
+      const productIndex = products.findIndex(product => product.id === id);
+
+      if (productIndex >= 0) {
+        const item = products[productIndex];
+
+        const newItem = { ...item, quantity: item.quantity + 1 };
+
+        setProducts([
+          ...products.slice(0, productIndex),
+          newItem,
+          ...products.slice(productIndex + 1),
+        ]);
+      }
+
+      // Update AsyncStorage
+      await AsyncStorage.multiSet([
+        ['@GoMarketplace:cart', JSON.stringify(products)],
+      ]);
+    },
+    [products, setProducts],
+  );
 
   const decrement = useCallback(async id => {
     // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
