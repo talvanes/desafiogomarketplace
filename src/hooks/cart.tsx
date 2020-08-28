@@ -52,14 +52,14 @@ const CartProvider: React.FC = ({ children }) => {
           quantity: 1,
         };
 
+        // Update AsyncStorage
+        await AsyncStorage.setItem(
+          '@GoMarketplace:cart',
+          JSON.stringify(products),
+        );
+
         setProducts([...products, newProduct]);
       }
-
-      // Update AsyncStorage
-      await AsyncStorage.setItem(
-        '@GoMarketplace:cart',
-        JSON.stringify(products),
-      );
     },
     [products, setProducts],
   );
@@ -77,18 +77,18 @@ const CartProvider: React.FC = ({ children }) => {
           quantity: item.quantity + 1,
         };
 
+        // Update AsyncStorage
+        await AsyncStorage.setItem(
+          '@GoMarketplace:cart',
+          JSON.stringify(products),
+        );
+
         setProducts([
           ...products.slice(0, index),
           updatedItem,
           ...products.slice(index + 1),
         ]);
       }
-
-      // Update AsyncStorage
-      await AsyncStorage.setItem(
-        '@GoMarketplace:cart',
-        JSON.stringify(products),
-      );
     },
     [products, setProducts],
   );
@@ -106,18 +106,18 @@ const CartProvider: React.FC = ({ children }) => {
           quantity: item.quantity - 1,
         };
 
+        // Update AsyncStorage
+        await AsyncStorage.setItem(
+          '@GoMarketplace:cart',
+          JSON.stringify(products),
+        );
+
         setProducts([
           ...products.slice(0, index),
           updatedItem,
           ...products.slice(index + 1),
         ]);
       }
-
-      // Update AsyncStorage
-      await AsyncStorage.setItem(
-        '@GoMarketplace:cart',
-        JSON.stringify(products),
-      );
     },
     [products, setProducts],
   );
